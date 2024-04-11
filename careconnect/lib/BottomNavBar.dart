@@ -4,8 +4,8 @@ import 'package:careconnect/MediaPage.dart';
 import 'package:careconnect/MedicationPage.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-
 import 'HomePage.dart';
+import 'map.dart';
 
 class BottomNavBar extends StatefulWidget {
   const BottomNavBar({Key? key}) : super(key: key);
@@ -22,7 +22,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     ContactsPage(),
     MedicationPage(),
     HomePage(),
-    LocationPage(),
+    LocationPage(mapPage: MapPage()),
     MediaPage(),
   ];
 

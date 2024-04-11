@@ -1,43 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart'; // Import Google Maps Flutter package
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Cloud Firestore package
-import 'AddRadiusPage.dart';
+import 'map.dart'; // Import your MapPage widget
 
-class LocationPage extends StatefulWidget {
-  @override
-  _LocationPageState createState() => _LocationPageState();
-}
+class LocationPage extends StatelessWidget {
+  final MapPage mapPage; // Accept MapPage widget as a parameter
 
-class _LocationPageState extends State<LocationPage> {
-  LatLng _location = LatLng(0, 0); // Default location
-
-  @override
-  void initState() {
-    super.initState();
-    _getLocationFromFirestore(); // Retrieve location from Firestore when the widget is initialized
-  }
-
-  Future<void> _getLocationFromFirestore() async {
-    try {
-      // Retrieve latitude and longitude from Firestore
-      QuerySnapshot<Map<String, dynamic>> querySnapshot = await FirebaseFirestore.instance.collection('locations').get();
-
-      if (querySnapshot.docs.isNotEmpty) {
-        // Get the first document (assuming there's only one location in the collection)
-        DocumentSnapshot<Map<String, dynamic>> firstDoc = querySnapshot.docs.first;
-
-        // Extract latitude and longitude from the document
-        double latitude = firstDoc['latitude'];
-        double longitude = firstDoc['longitude'];
-
-        setState(() {
-          _location = LatLng(latitude, longitude); // Update the location state
-        });
-      }
-    } catch (e) {
-      print('Error fetching location from Firestore: $e');
-    }
-  }
+  const LocationPage({Key? key, required this.mapPage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +18,7 @@ class _LocationPageState extends State<LocationPage> {
         children: [
           SizedBox(height: 20.0),
           SizedBox(
-            height: 200.0,
+            height: 400.0,
             child: Card(
               color: Color(0xFFFFEADB),
               child: Column(
@@ -71,23 +38,7 @@ class _LocationPageState extends State<LocationPage> {
                     ),
                   ),
                   Expanded(
-                    child: Center(
-                      child: Container(
-                        // Display map using GoogleMap widget
-                        child: GoogleMap(
-                          initialCameraPosition: CameraPosition(
-                            target: _location,
-                            zoom: 15.0,
-                          ),
-                          markers: Set<Marker>.of([
-                            Marker(
-                              markerId: MarkerId('currentLocation'),
-                              position: _location,
-                            ),
-                          ]),
-                        ),
-                      ),
-                    ),
+                    child: mapPage, // Display the MapPage widget here
                   ),
                 ],
               ),
@@ -113,10 +64,7 @@ class _LocationPageState extends State<LocationPage> {
                         IconButton(
                           icon: Icon(Icons.add),
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => AddRadiusPage()),
-                            );
+                            // Handle onPressed
                           },
                         ),
                       ],
